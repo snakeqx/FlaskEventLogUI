@@ -1,0 +1,55 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Flask Event Log UI{% endblock %}
+
+{% block head %}
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- By using CND
+	<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+	-->
+    <link rel="stylesheet" type="text/css" href="./static/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./static/easyui/themes/icon.css">
+	<script type="text/javascript" src="./static/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="./static/easyui/jquery.easyui.min.js"></script>
+    <!--<script type="text/javascript" src="./static/easyui/extentions/datagrid-scrollview.js"></script> -->
+{% endblock %}
+
+{% block body %}
+	<h1>DataGrid</h1>
+	<table id="tt" class="easyui-datagrid" style="width:90%; height:400px" url="get_data"
+			rownumbers="true" pagination="true">
+		<thead>
+			<tr>
+				<th field="severity" width="20%">Severity</th>
+				<th field="datetime" width="20%">Date Time</th>
+				<th field="messageid" width="20%" align="right">Message ID</th>
+				<th field="messagetext" width="40%" align="right">Message Text</th>
+			</tr>
+		</thead>
+	</table>
+
+    <script>
+        $(function(){
+            loadLocal();
+        });
+        function loadLocal(){
+            var rows = [];
+            for(var i=1; i<=80; i++){
+                var amount = Math.floor(Math.random()*1000);
+                var price = Math.floor(Math.random()*1000);
+                rows.push({
+                    severity: 'Inv No '+i,
+                    datetime: $.fn.datebox.defaults.formatter(new Date()),
+                    messageid: 'Name '+i,
+                    messagetext: amount
+                });
+            }
+            $('#tt').datagrid('loadData', rows);
+        }
+    </script>
+{% endblock %}
+
+
