@@ -25,7 +25,17 @@ event_log = EventLog(r"./ExampleData/a.gz")
 
 @app.route("/", methods=['GET'])
 def index():
-    return render_template('base.html')
+    return render_template('base.html', serial_number=event_log.Node[0])
+
+
+@app.route("/get_detail/", methods=['GET'])
+def get_detail():
+    param_id = request.args.get('id')
+    try:
+        param_id = int(param_id)
+    except Exception as e:
+        return "Server Error.\n" + str(e)
+    return event_log.MessageText[param_id]
 
 
 @app.route("/get_data", methods=['POST'])
@@ -53,7 +63,6 @@ def get_data():
 
 
 def main():
-
     app.run(debug=True)
 
 

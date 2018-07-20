@@ -14,41 +14,49 @@
 	<link rel="stylesheet" type="text/css" href="./static/easyui/themes/icon.css">
 	<script type="text/javascript" src="./static/easyui/jquery.min.js"></script>
 	<script type="text/javascript" src="./static/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="http://www.w3cschool.cc/try/jeasyui/datagrid-detailview.js"></script>
     <!--<script type="text/javascript" src="./static/easyui/extentions/datagrid-scrollview.js"></script> -->
 {% endblock %}
 
 {% block body %}
-	<h1>DataGrid</h1>
-	<table id="tt" class="easyui-datagrid" style="width:90%; height:400px" url="get_data"
-			rownumbers="true" pagination="true">
-		<thead>
-			<tr>
-				<th field="severity" width="20%">Severity</th>
-				<th field="datetime" width="20%">Date Time</th>
-				<th field="messageid" width="20%" align="right">Message ID</th>
-				<th field="messagetext" width="40%" align="right">Message Text</th>
-			</tr>
-		</thead>
-	</table>
+
+    <body class="easyui-layout">
+        <div region="center" style="padding:5px;" border="false">
+            <h1>{{serial_number}}</h1>
+            <table id="tt" class="easyui-datagrid" style="width:auto;height:90%" url="get_data"
+                    pagination="true" pagesize="20">
+                <thead>
+                    <tr>
+                        <th field="id" width="5%" align="center">Id</th>
+                        <th field="severity" width="5%" align="center">Severity</th>
+                        <th field="datetime" width="10%" align="center">Date Time</th>
+                        <th field="messageid" width="20%" align="center">Message ID</th>
+                        <th field="messagetext" width="60%" align="center">Message Text</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </body>
 
     <script>
-        $(function(){
-            loadLocal();
-        });
-        function loadLocal(){
-            var rows = [];
-            for(var i=1; i<=80; i++){
-                var amount = Math.floor(Math.random()*1000);
-                var price = Math.floor(Math.random()*1000);
-                rows.push({
-                    severity: 'Inv No '+i,
-                    datetime: $.fn.datebox.defaults.formatter(new Date()),
-                    messageid: 'Name '+i,
-                    messagetext: amount
+        $('#tt').datagrid({
+            view: detailview,
+            detailFormatter:function(index,row){
+                return '<div class="ddv" style="padding:5px 0"></div>';
+            },
+            onExpandRow: function(index,row){
+                var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
+                ddv.panel({
+                    border:false,
+                    cache:false,
+                    href:'get_detail?id='+row.id,
+                    onLoad:function(){
+                        $('#dg').datagrid('fixDetailRowHeight',index);
+                    }
                 });
+                $('#dg').datagrid('fixDetailRowHeight',index);
             }
-            $('#tt').datagrid('loadData', rows);
-        }
+        });
     </script>
 {% endblock %}
 
