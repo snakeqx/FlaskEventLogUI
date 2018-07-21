@@ -1,0 +1,54 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Flask Event Log UI{% endblock %}
+
+{% block head %}
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- By using CND
+	<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+	-->
+    <link rel="stylesheet" type="text/css" href="./static/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./static/easyui/themes/icon.css">
+	<script type="text/javascript" src="./static/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="./static/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="http://www.w3cschool.cc/try/jeasyui/datagrid-detailview.js"></script>
+    <!--<script type="text/javascript" src="./static/easyui/extentions/datagrid-scrollview.js"></script> -->
+{% endblock %}
+
+{% block body %}
+
+    <body class="easyui-layout">
+    <!-- upload file -->
+        <div region="center" style="padding:5px;" border="true" split="true"
+            title="Open file" height="120px">
+                <form id="uploadform" method="post" enctype="multipart/form-data">
+                        <input type="file" id="fileinput" name="file" size="10"/>
+                        <input id="uploadbutton" type="button" value="Upload"/>
+                </form>
+        </div>
+
+    <script>
+
+        $('#uploadbutton').click(function(){
+            var form_data = new FormData($('#uploadform')[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/upload',
+                data: form_data,
+                contentType: false,
+                cache: false,
+                processData: false,
+                async: false,
+                success: function(data) {
+                    window.location.href = data;
+                }
+            })
+        })
+
+    </script>
+{% endblock %}
+
+

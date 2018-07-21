@@ -21,8 +21,9 @@
 {% block body %}
 
     <body class="easyui-layout">
-        <div region="center" style="padding:5px;" border="false">
-            <h1>{{serial_number}}</h1>
+    <!-- Log UI -->
+        <div region="center" style="padding:5px;" border="false"
+            title={{serial_number}}>
             <table id="tt" class="easyui-datagrid" style="width:auto;height:90%" url="get_data"
                     pagination="true" pagesize="20">
                 <thead>
