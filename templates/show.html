@@ -21,18 +21,35 @@
 {% block body %}
 
     <body class="easyui-layout">
+    <!-- Tool bar -->
+    <div region="north" style="padding:5px;" border="true" title="Filter" height="auto">
+        <p>
+            <label>Severity:</label>
+            <input type="checkbox" id="cbError" checked>Error
+            <input type="checkbox" id="cbWarning">Warning
+            <input type="checkbox" id="cbInfo">Info
+            <input type="checkbox" id="cbSuccess">Success
+        </p>
+        <p>
+            <label>Type:</label>
+            <input type="checkbox" id="cbDeveloper">Developer
+            <input type="checkbox" id="cbService" checked>Service
+        </p>
+        <p>
+            <input type="submit" id="filterButton" value="Filter">
+        </p>
+    </div>
     <!-- Log UI -->
-        <div region="center" style="padding:5px;" border="false"
-            title={{serial_number}}>
-            <table id="tt" class="easyui-datagrid" style="width:auto;height:90%" url="get_data"
+        <div region="center" style="padding:5px;" border="false" title={{serial_number}}>
+            <table id="tt" class="easyui-datagrid" style="width:auto;height:90%" toolbar="#tb"
                     pagination="true" pagesize="20">
                 <thead>
                     <tr>
-                        <th field="id" width="5%" align="center">Id</th>
-                        <th field="severity" width="5%" align="center">Severity</th>
+                        <th field="severity" width="10%" align="center">Severity</th>
+                        <th field="type" width="10%" align="center">Type</th>
                         <th field="datetime" width="10%" align="center">Date Time</th>
                         <th field="messageid" width="20%" align="center">Message ID</th>
-                        <th field="messagetext" width="60%" align="center">Message Text</th>
+                        <th field="messagetext" width="45%" align="center">Message Text</th>
                     </tr>
                 </thead>
             </table>
@@ -43,7 +60,7 @@
         $('#tt').datagrid({
             view: detailview,
             detailFormatter:function(index,row){
-                return '<div class="ddv" style="padding:5px 0"></div>';
+                return '<div class="ddv" style="padding:5px"></div>';
             },
             onExpandRow: function(index,row){
                 var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
@@ -58,6 +75,42 @@
                 $('#dg').datagrid('fixDetailRowHeight',index);
             }
         });
+
+        $('#filterButton').click(function(){
+            var error = $('#cbError').is(":checked")
+            var warn = $('#cbWarning').is(":checked")
+            var info = $('#cbInfo').is(":checked")
+            var sucs = $('#cbSuccess').is(":checked")
+            var dev = $('#cbDeveloper').is(":checked")
+            var serv = $('#cbService').is(":checked")
+            $('#tt').datagrid({
+                url:"get_data",
+                queryParams:{
+                    "error":error,
+                    "warn":warn,
+                    "info":info,
+                    "success":sucs,
+                    "developer":dev,
+                    "service":serv
+                },
+                pageSize: 20,
+                pageNumber: 1
+            })
+        })
+
+        $('#tt').datagrid({
+            url:"get_data",
+            queryParams:{
+                "page":1,
+                "rows":20,
+                "error":true,
+                "warn":false,
+                "info":false,
+                "success":false,
+                "developer":false,
+                "service":true
+            }
+        })
     </script>
 {% endblock %}
 

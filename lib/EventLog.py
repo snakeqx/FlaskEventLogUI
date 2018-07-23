@@ -1,5 +1,6 @@
 import gzip
 import logging
+import json
 
 try:
     import xml.etree.cElementTree as ElTree
@@ -83,8 +84,38 @@ class EventLog:
                 "datetime":     self.DateTime[i],
                 "messageid":    self.MessageId[i],
                 "messagetext":  self.MessageText[i],
+                "type":         self.Type[i],
             }
             self.DictList.append(temp_dict)
+
+    def get_json(self, is_error, is_warn, is_info, is_sucess,
+                 is_developer, is_service, page, rows):
+        qty = 0
+        filter_list = []
+        result_list = []
+        if is_error:
+            filter_list.append("Error")
+        if is_warn:
+            filter_list.append("Warning")
+        if is_info:
+            filter_list.append("Information")
+        if is_sucess:
+            filter_list.append("Success")
+        if is_developer:
+            filter_list.append("Developer")
+        if is_service:
+            filter_list.append("Service")
+        for i in self.DictList:
+            if (i["severity"] in filter_list) and (i["type"] in filter_list):
+                result_list.append(i)
+                qty += 1
+        dic2 = {
+            "total": qty,
+            "rows": result_list[(page - 1) * rows: (page - 1) * rows + rows]}
+        json_str = json.dumps(dic2)
+        return json_str
+
+
 
 
 if __name__ == '__main__':

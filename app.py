@@ -60,7 +60,7 @@ def get_detail():
     param_id = request.args.get('id')
     try:
         param_id = int(param_id)
-        return event_log.MessageText[param_id]
+        return event_log.MessageText[param_id].replace("\n", "<br/>")
     except Exception as e:
         return "Server Error.\n" + str(e)
 
@@ -68,27 +68,41 @@ def get_detail():
 @app.route("/get_data", methods=['POST'])
 def get_data():
     global event_log
+    # get values from HTTP protocol
     page = request.values.get('page')
     rows = request.values.get('rows')
-    error_dict = {"total": 1,
-                  "rows": [{
-                      "id": 1,
-                      "severity": "Error in Server",
-                      "datetime": "Error in Server",
-                      "messageid": "Error in Server",
-                      "messagetext": "Error in Server", }]}
+    is_error = request.values.get('error')
+    is_warn = request.values.get('warn')
+    is_info = request.values.get('info')
+    is_success = request.values.get('success')
+    is_developer = request.values.get('developer')
+    is_service = request.values.get('service')
+
+    # the filter parameter is string, convert to bool
+    is_error = json.loads(is_error.lower())
+    is_warn = json.loads(is_warn.lower())
+    is_info = json.loads(is_info.lower())
+    is_success = json.loads(is_success.lower())
+    is_developer = json.loads(is_developer.lower())
+    is_service = json.loads(is_service.lower())
+
     # try to convert from string to int
     try:
         page = int(page)
         rows = int(rows)
     except Exception as e:
-        print(str(e))
+        error_dict = {"total": 1,
+                      "rows": [{
+                          "id": 1,
+                          "severity": "Error in Server",
+                          "datetime": "Error in Server",
+                          "messageid": "Error in Server",
+                          "type": "Error in Server",
+                          "messagetext": str(e), }]}
         return error_dict
     try:
-        dic2 = {
-            "total": event_log.ItemQuantity,
-            "rows": event_log.DictList[(page - 1) * rows: (page - 1) * rows + rows]}
-        json_str = json.dumps(dic2)
+        json_str = event_log.get_json(is_error, is_warn, is_info, is_success,
+                                      is_developer, is_service, page, rows)
     except Exception as e:
         non_initial = {"total": 1,
                        "rows": [{
@@ -96,6 +110,7 @@ def get_data():
                            "severity": "n.a.",
                            "datetime": "n.a.",
                            "messageid": "n.a.",
+                           "type": "n.a.",
                            "messagetext": str(e), }]}
         json_str = json.dumps(non_initial)
     return json_str
